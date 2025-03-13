@@ -1,211 +1,266 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大黄鱼智能溯源小程序原型</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+<head></head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大黄鱼智能溯源小程序原型</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    @keyframes scanLine {
+        0% {
+            transform: translateY(0);
         }
 
-        .prototype-container {
-            max-width: 390px;
-            min-height: 844px;
-            margin: 20px auto;
-            border: 1px solid #ddd;
-            border-radius: 40px;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        100% {
+            transform: translateY(200px);
         }
+    }
 
-        .nav {
-            background: #f8f8f8;
-            padding: 10px;
-        }
-
-        .pages {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .page-preview {
-            border: 1px solid #eee;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .mock-screen {
-            background: white;
-            border-radius: 30px;
-            padding: 15px;
-            min-height: 800px;
-            transition: all 0.3s ease;
-        }
-
-        .button-primary {
-            padding: 15px 30px;
-            background: #1aad19;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 16px;
-            box-shadow: 0 4px 12px rgba(26, 173, 25, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .button-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(26, 173, 25, 0.3);
-        }
-
-        .scan-record {
-            padding: 12px;
-            background: #f8f8f8;
-            border-radius: 8px;
-            margin: 10px 0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .scan-record:hover {
-            background: #f0f0f0;
-            transform: scale(1.02);
-        }
-
-        .trace-card {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .trace-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .page-transition {
+    @keyframes fadeIn {
+        from {
             opacity: 0;
-            transform: translateX(20px);
-            animation: fadeIn 0.3s forwards;
+            transform: translateY(10px);
         }
 
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        .back-button {
-            padding: 8px 15px;
-            background: #f5f5f5;
-            border: none;
-            border-radius: 20px;
-            color: #666;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
-    </style>
+    .fade-in {
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    .share-panel {
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
+    }
+
+    .share-panel.active {
+        transform: translateY(0);
+    }
+
+    .badge-verified {
+        background: linear-gradient(45deg, #10B981, #059669);
+    }
+</style>
 </head>
 
-<body>
-    <div class="prototype-container">
-        <div class="nav">
-            <select id="pageSelector" onchange="switchPage(this.value)">
+<body class="bg-gray-100">
+    <div
+        class="max-w-[390px] min-h-[844px] mx-auto my-5 border border-gray-200 rounded-[40px] p-5 bg-white shadow-lg relative">
+        <!-- 添加顶部搜索栏 -->
+        <div class="bg-gray-50 p-3 rounded-lg mb-4">
+            <div class="relative">
+                <input type="search" placeholder="搜索产品或溯源码"
+                    class="w-full p-2 pl-10 rounded-lg border border-gray-200 outline-none focus:border-green-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-2.5 text-gray-400"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-lg mb-4">
+            <select id="pageSelector" onchange="switchPage(this.value)"
+                class="w-full p-2 rounded-lg border border-gray-200 outline-none">
                 <option value="home">首页</option>
                 <option value="scan">扫码页面</option>
                 <option value="detail">产品详情</option>
                 <option value="trace">溯源信息</option>
             </select>
         </div>
-        <div class="mock-screen" id="currentPage">
-            <!-- 页面内容将通过JavaScript动态加载 -->
+        <div id="currentPage" class="min-h-[800px] transition-all duration-300"></div>
+        <!-- 添加底部导航栏 -->
+        <div class="fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto bg-white border-t border-gray-200 px-5 py-3">
+            <div class="flex justify-around items-center">
+                <button onclick="switchPage('home')" class="flex flex-col items-center text-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span class="text-xs mt-1">首页</span>
+                </button>
+                <button onclick="switchPage('scan')" class="flex flex-col items-center text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4v1m6 11h2m-6 0h-2m4-7v1m-4-8v1m0 0h4m-4 0v4m4-4v4m0 0v4m0-4h4m-4 0h-4" />
+                    </svg>
+                    <span class="text-xs mt-1">扫码</span>
+                </button>
+                <button onclick="switchPage('user')" class="flex flex-col items-center text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span class="text-xs mt-1">我的</span>
+                </button>
+            </div>
+        </div>
+        <!-- 添加分享面板 -->
+        <div id="sharePanel"
+            class="share-panel fixed bottom-0 left-0 right-0 max-w-[390px] mx-auto bg-white rounded-t-3xl shadow-lg p-6 z-50">
+            <div class="text-center mb-6">
+                <h3 class="text-lg font-semibold mb-2">分享到</h3>
+                <div class="grid grid-cols-4 gap-4 mb-4">
+                    <button class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M8.584 16.93L8.176 21.513C8.716 21.513 8.956 21.273 9.244 20.985L11.676 18.633L16.224 21.873C17.196 22.413 17.896 22.133 18.156 20.941L21.396 4.209C21.704 2.773 20.824 2.193 19.884 2.573L2.291 10.013C0.891 10.553 0.911 11.373 2.051 11.713L6.359 13.053L16.956 5.793C17.556 5.393 18.116 5.613 17.676 6.013L8.584 16.93Z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm">Telegram</span>
+                    </button>
+                    <button class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm">微信</span>
+                    </button>
+                    <button class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M22.05 11.846c0-4.917-4.793-8.91-10.703-8.91-5.91 0-10.703 3.993-10.703 8.91 0 4.918 4.793 8.91 10.703 8.91.623 0 1.232-.044 1.824-.126l.441-.037c.661 1.305 2.157 3.163 3.347 3.163.323 0 .519-.198.519-.45 0-.184-.113-.369-.242-.554-1.338-1.93-1.394-2.297-1.394-2.555 0-.111.056-.224.169-.324 2.905-1.823 4.693-4.674 4.693-7.837z" />
+                            </svg>
+                        </div>
+                        <span class="text-sm">朋友圈</span>
+                    </button>
+                    <button class="flex flex-col items-center">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
+                            <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M4 12V20C4 20.5523 4.44772 21 5 21H19C19.5523 21 20 20.5523 20 20V12M4 12V4C4 3.44772 4.44772 3 5 3H19C19.5523 3 20 3.44772 20 4V12M4 12H20" />
+                            </svg>
+                        </div>
+                        <span class="text-sm">复制链接</span>
+                    </button>
+                </div>
+                <button onclick="toggleSharePanel()" class="w-full py-3 text-gray-500 border-t border-gray-100">
+                    取消
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
         const pages = {
             home: `
-                <div style="text-align: center;">
-                    <h2 style="color: #333; margin: 30px 0;">大黄鱼溯源</h2>
-                    <div style="margin: 30px;">
-                        <button class="button-primary">
-                            <i class="fas fa-qrcode"></i> 扫描溯源码
+                <div class="text-center p-6">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-8">大黄鱼溯源</h2>
+                    <div class="mb-8">
+                        <button class="bg-green-500 text-white px-8 py-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2m4-7v1m-4-8v1m0 0h4m-4 0v4m4-4v4m0 0v4m0-4h4m-4 0h-4" />
+                            </svg>
+                            扫描溯源码
                         </button>
                     </div>
-                    <div style="margin-top: 30px;">
-                        <h3 style="color: #666;">最近扫码</h3>
-                        <div class="scan-record">
-                            <strong>宁波大黄鱼</strong>
-                            <p style="color: #666; margin: 5px 0;">扫描时间：2024-01-20</p>
-                        </div>
-                        <div class="scan-record">
-                            <strong>象山大黄鱼</strong>
-                            <p style="color: #666; margin: 5px 0;">扫描时间：2024-01-19</p>
+                    <div class="mt-8">
+                        <h3 class="text-gray-600 text-lg mb-4">最近扫码</h3>
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-all" onclick="switchPage('detail')">
+                                <img src="https://images.unsplash.com/photo-1534043464124-3be32fe000c9" class="w-full h-32 object-cover rounded-lg mb-3" alt="大黄鱼">
+                                <strong class="block text-gray-800">宁波大黄鱼</strong>
+                                <p class="text-gray-500 text-sm mt-1">扫描时间：2024-01-20</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-xl cursor-pointer hover:bg-gray-100 transition-all">
+                                <img src="https://images.unsplash.com/photo-1511421585906-9f03c7b58d3a" class="w-full h-32 object-cover rounded-lg mb-3" alt="大黄鱼">
+                                <strong class="block text-gray-800">象山大黄鱼</strong>
+                                <p class="text-gray-500 text-sm mt-1">扫描时间：2024-01-19</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             `,
             scan: `
-                <div style="text-align: center;" class="page-transition">
-                    <button class="back-button" onclick="switchPage('home')">返回</button>
-                    <div style="margin: 20px;">
-                        <div style="width: 300px; height: 300px; border: 2px solid #1aad19; margin: 0 auto; position: relative;">
-                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-                                <div style="width: 200px; height: 2px; background: #1aad19; animation: scan 2s infinite;"></div>
-                            </div>
-                            <p style="margin-top: 330px; color: #666;">将溯源码对准扫描框</p>
+                <div class="p-6">
+                    <button onclick="switchPage('home')" class="mb-6 px-4 py-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        返回
+                    </button>
+                    <div class="relative w-[300px] h-[300px] mx-auto border-2 border-green-500 rounded-lg">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-[250px] h-[2px] bg-green-500" style="animation: scanLine 2s linear infinite"></div>
                         </div>
+                        <p class="absolute -bottom-10 left-0 right-0 text-center text-gray-500">将溯源码对准扫描框</p>
                     </div>
                 </div>
             `,
             detail: `
-                <div class="page-transition">
-                    <button class="back-button" onclick="switchPage('home')">返回</button>
-                    <div class="product-detail">
-                        <h3 style="color: #333; margin-bottom: 20px;">产品信息</h3>
-                        <div style="margin: 15px 0;">
-                            <img src="fish-placeholder.jpg" alt="产品图片" style="width: 100%; height: 200px; object-fit: cover; background: #eee; border-radius: 12px;">
+                <div class="p-6">
+                    <button onclick="switchPage('home')" class="mb-6 px-4 py-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        返回
+                    </button>
+                    <div class="space-y-6">
+                        <div class="relative">
+                            <img src="https://images.unsplash.com/photo-1534043464124-3be32fe000c9" class="w-full h-48 object-cover rounded-xl shadow-md" alt="大黄鱼">
+                            <div class="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-sm">
+                                已认证
+                            </div>
                         </div>
-                        <div class="trace-card">
-                            <p><strong>产品名称：</strong>宁波大黄鱼</p>
-                            <p><strong>规格：</strong>500g</p>
-                            <p><strong>生产日期：</strong>2024-01-20</p>
-                            <p><strong>保质期：</strong>12个月</p>
-                            <p><strong>储存方式：</strong>冷藏</p>
+                        <div class="bg-gray-50 p-5 rounded-xl space-y-3">
+                            <p class="flex justify-between"><span class="text-gray-600">产品名称</span><span class="text-gray-800">宁波大黄鱼</span></p>
+                            <p class="flex justify-between"><span class="text-gray-600">规格</span><span class="text-gray-800">500g</span></p>
+                            <p class="flex justify-between"><span class="text-gray-600">生产日期</span><span class="text-gray-800">2024-01-20</span></p>
+                            <p class="flex justify-between"><span class="text-gray-600">保质期</span><span class="text-gray-800">12个月</span></p>
+                            <p class="flex justify-between"><span class="text-gray-600">储存方式</span><span class="text-gray-800">冷藏</span></p>
                         </div>
-                        <button onclick="switchPage('trace')" class="button-primary" style="width: 100%; margin-top: 20px;">
-                            查看溯源信息
-                        </button>
+                        <div class="flex space-x-4">
+                            <button onclick="switchPage('trace')" class="flex-1 bg-green-500 text-white py-4 rounded-full shadow-lg hover:shadow-xl transition-all">
+                                查看溯源信息
+                            </button>
+                            <button class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             `,
             trace: `
-                <div class="page-transition">
-                    <button class="back-button" onclick="switchPage('detail')">返回</button>
-                    <div style="padding: 15px;">
-                        <h3 style="color: #333;">溯源信息</h3>
-                        <div style="margin-top: 20px;">
-                            <div class="trace-card">
-                                <h4 style="color: #1aad19;">养殖阶段</h4>
+                <div class="p-6">
+                    <button onclick="switchPage('detail')" class="mb-6 px-4 py-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                        返回
+                    </button>
+                    <div class="space-y-4">
+                        <div class="bg-gray-50 p-5 rounded-xl hover:shadow-md transition-all">
+                            <h4 class="text-green-500 text-lg font-semibold mb-3">养殖阶段</h4>
+                            <div class="space-y-2 text-gray-600">
                                 <p>养殖地：浙江省象山县</p>
                                 <p>养殖时间：2023-01-20 至 2024-01-15</p>
                                 <p>养殖环境：海水网箱</p>
                             </div>
-                            <div class="trace-card">
-                                <h4 style="color: #1aad19;">加工阶段</h4>
+                        </div>
+                        <div class="bg-gray-50 p-5 rounded-xl hover:shadow-md transition-all">
+                            <h4 class="text-green-500 text-lg font-semibold mb-3">加工阶段</h4>
+                            <div class="space-y-2 text-gray-600">
                                 <p>加工地：宁波市北仑水产品加工基地</p>
                                 <p>加工时间：2024-01-16</p>
                                 <p>加工方式：冷冻加工</p>
                             </div>
-                            <div class="trace-card">
-                                <h4 style="color: #1aad19;">运输阶段</h4>
+                        </div>
+                        <div class="bg-gray-50 p-5 rounded-xl hover:shadow-md transition-all">
+                            <h4 class="text-green-500 text-lg font-semibold mb-3">运输阶段</h4>
+                            <div class="space-y-2 text-gray-600">
                                 <p>发货地：宁波市北仑区</p>
                                 <p>目的地：宁波市海曙区</p>
                                 <p>运输方式：冷链物流</p>
@@ -213,7 +268,88 @@
                         </div>
                     </div>
                 </div>
-            `
+            `,
+            user: `
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-6">个人中心</h2>
+                <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-4 text-white mb-6">
+                    <div class="flex items-center">
+                        <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="font-semibold text-lg">游客</h3>
+                            <p class="text-sm text-white/80">点击登录账号</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <h4 class="text-gray-600 mb-3">我的服务</h4>
+                        <div class="grid grid-cols-4 gap-4">
+                            <div class="text-center">
+                                <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm">扫码记录</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm">收藏夹</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm">消息通知</span>
+                            </div>
+                            <div class="text-center">
+                                <div class="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center mx-auto mb-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <span class="text-sm">设置</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <h4 class="text-gray-600 mb-3">更多服务</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span>关于我们</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <span>帮助中心</span>
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `
         };
 
         function switchPage(page) {
@@ -222,11 +358,36 @@
             setTimeout(() => {
                 currentPage.innerHTML = pages[page];
                 currentPage.style.opacity = '1';
+                updateNavigation(page);
             }, 300);
         }
 
         // 初始化显示首页
         switchPage('home');
+
+        // 添加分享面板控制
+        function toggleSharePanel() {
+            const panel = document.getElementById('sharePanel');
+            panel.classList.toggle('active');
+        }
+
+        // 更新分享按钮点击事件
+        const shareButton = document.querySelector('.share-button');
+        if (shareButton) {
+            shareButton.addEventListener('click', toggleSharePanel);
+        }
+
+        // 更新底部导航激活状态函数
+        function updateNavigation(page) {
+            const buttons = document.querySelectorAll('.fixed.bottom-0 button');
+            buttons.forEach(button => {
+                button.className = button.className.replace('text-green-500', 'text-gray-400');
+            });
+            const currentButton = document.querySelector(`.fixed.bottom-0 button[onclick="switchPage('${page}')"]`);
+            if (currentButton) {
+                currentButton.className = currentButton.className.replace('text-gray-400', 'text-green-500');
+            }
+        }
     </script>
 </body>
 

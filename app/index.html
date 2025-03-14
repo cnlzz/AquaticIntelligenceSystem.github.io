@@ -108,7 +108,7 @@
             <div class="text-center mb-6">
                 <h3 class="text-lg font-semibold mb-2">分享到</h3>
                 <div class="grid grid-cols-4 gap-4 mb-4">
-                    <button class="flex flex-col items-center">
+                    <button class="flex flex-col items-center" onclick="handleShare('telegram')">
                         <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
                             <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -117,7 +117,7 @@
                         </div>
                         <span class="text-sm">Telegram</span>
                     </button>
-                    <button class="flex flex-col items-center">
+                    <button class="flex flex-col items-center" onclick="handleShare('wechat')">
                         <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
                             <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -126,7 +126,7 @@
                         </div>
                         <span class="text-sm">微信</span>
                     </button>
-                    <button class="flex flex-col items-center">
+                    <button class="flex flex-col items-center" onclick="handleShare('moments')">
                         <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
                             <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -135,7 +135,7 @@
                         </div>
                         <span class="text-sm">朋友圈</span>
                     </button>
-                    <button class="flex flex-col items-center">
+                    <button class="flex flex-col items-center" onclick="handleShare('copy')">
                         <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-1">
                             <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -224,6 +224,9 @@
                             <button onclick="switchPage('trace')" class="flex-1 bg-green-500 text-white py-4 rounded-full shadow-lg hover:shadow-xl transition-all">
                                 查看溯源信息
                             </button>
+                            <button onclick="switchPage('quality')" class="flex-1 bg-white text-green-500 border border-green-500 py-4 rounded-full hover:bg-green-50 transition-all">
+                                查看品质评级
+                            </button>
                             <button class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-all">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -241,29 +244,108 @@
                         </svg>
                         返回
                     </button>
+
+                    <!-- 添加区块链验证信息 -->
+                    <div class="bg-green-50 p-4 rounded-xl mb-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-3">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-green-800">区块链验证</h4>
+                                    <p class="text-sm text-green-600">数据已上链存证，不可篡改</p>
+                                </div>
+                            </div>
+                            <button onclick="showBlockchainVerification()" class="text-green-600 text-sm">查看证书</button>
+                        </div>
+                    </div>
+
                     <div class="space-y-4">
+                        <!-- 养殖阶段 -->
                         <div class="bg-gray-50 p-5 rounded-xl hover:shadow-md transition-all">
                             <h4 class="text-green-500 text-lg font-semibold mb-3">养殖阶段</h4>
                             <div class="space-y-2 text-gray-600">
                                 <p>养殖地：浙江省象山县</p>
                                 <p>养殖时间：2023-01-20 至 2024-01-15</p>
                                 <p>养殖环境：海水网箱</p>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <h5 class="text-sm font-medium mb-2">环境监测数据</h5>
+                                    <div class="grid grid-cols-2 gap-2 text-sm">
+                                        <div class="bg-white p-2 rounded">
+                                            <span class="text-gray-500">水温</span>
+                                            <p class="font-medium">22.5°C</p>
+                                        </div>
+                                        <div class="bg-white p-2 rounded">
+                                            <span class="text-gray-500">盐度</span>
+                                            <p class="font-medium">29.8‰</p>
+                                        </div>
+                                        <div class="bg-white p-2 rounded">
+                                            <span class="text-gray-500">溶解氧</span>
+                                            <p class="font-medium">6.8mg/L</p>
+                                        </div>
+                                        <div class="bg-white p-2 rounded">
+                                            <span class="text-gray-500">pH值</span>
+                                            <p class="font-medium">8.2</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- 加工阶段 -->
                         <div class="bg-gray-50 p-5 rounded-xl hover:shadow-md transition-all">
                             <h4 class="text-green-500 text-lg font-semibold mb-3">加工阶段</h4>
                             <div class="space-y-2 text-gray-600">
                                 <p>加工地：宁波市北仑水产品加工基地</p>
                                 <p>加工时间：2024-01-16</p>
                                 <p>加工方式：冷冻加工</p>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <h5 class="text-sm font-medium mb-2">质检信息</h5>
+                                    <div class="space-y-2">
+                                        <div class="flex justify-between items-center text-sm">
+                                            <span>重金属检测</span>
+                                            <span class="text-green-500">合格</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-sm">
+                                            <span>微生物检测</span>
+                                            <span class="text-green-500">合格</span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-sm">
+                                            <span>抗生素残留</span>
+                                            <span class="text-green-500">未检出</span>
+                                        </div>
+                                    </div>
+                                    <button onclick="showQualityReport()" class="mt-3 text-sm text-green-600">查看完整报告</button>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- 运输阶段 -->
                         <div class="bg-gray-50 p-5 rounded-xl hover:shadow-md transition-all">
                             <h4 class="text-green-500 text-lg font-semibold mb-3">运输阶段</h4>
                             <div class="space-y-2 text-gray-600">
                                 <p>发货地：宁波市北仑区</p>
                                 <p>目的地：宁波市海曙区</p>
                                 <p>运输方式：冷链物流</p>
+                                <div class="mt-3 pt-3 border-t border-gray-200">
+                                    <h5 class="text-sm font-medium mb-2">冷链监控</h5>
+                                    <div class="bg-white p-3 rounded">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="text-sm text-gray-500">运输全程温度</span>
+                                            <span class="text-sm font-medium">-18°C ~ -16°C</span>
+                                        </div>
+                                        <div class="h-2 bg-gray-100 rounded overflow-hidden">
+                                            <div class="h-full w-4/5 bg-green-500"></div>
+                                        </div>
+                                        <div class="mt-2 flex justify-between text-xs text-gray-400">
+                                            <span>标准范围: -18°C ~ -15°C</span>
+                                            <span>合格率: 100%</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -349,7 +431,123 @@
                     </div>
                 </div>
             </div>
-        `
+        `,
+            quality: `
+        <div class="p-6">
+            <button onclick="goBack()" class="mb-6 px-4 py-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                返回
+            </button>
+
+            <div class="space-y-6">
+                <!-- 品质等级展示 -->
+                <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-xl text-white">
+                    <h3 class="text-xl font-semibold mb-2">品质等级评定</h3>
+                    <div class="text-3xl font-bold mb-4">优级</div>
+                    <div class="flex items-center space-x-1">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                        <span>98分</span>
+                    </div>
+                </div>
+
+                <!-- 品质指标详情 -->
+                <div class="bg-gray-50 p-5 rounded-xl">
+                    <h4 class="font-semibold text-gray-800 mb-4">品质指标评分</h4>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">外观完整性</span>
+                                <span class="text-green-600">95分</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded">
+                                <div class="h-full w-[95%] bg-green-500 rounded"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">肉质鲜度</span>
+                                <span class="text-green-600">98分</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded">
+                                <div class="h-full w-[98%] bg-green-500 rounded"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-600">营养成分</span>
+                                <span class="text-green-600">96分</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded">
+                                <div class="h-full w-[96%] bg-green-500 rounded"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 专业认证信息 -->
+                <div class="bg-gray-50 p-5 rounded-xl">
+                    <h4 class="font-semibold text-gray-800 mb-4">专业认证</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium">水产品质量安全认证</div>
+                                    <div class="text-sm text-gray-500">证书编号：SC10520240120</div>
+                                </div>
+                            </div>
+                            <button onclick="showCertificate('safety')" class="text-green-600 text-sm">查看</button>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-medium">质检报告</div>
+                                    <div class="text-sm text-gray-500">报告编号：QC20240120-001</div>
+                                </div>
+                            </div>
+                            <button onclick="showCertificate('quality')" class="text-green-600 text-sm">查看</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 检测数据 -->
+                <div class="bg-gray-50 p-5 rounded-xl">
+                    <h4 class="font-semibold text-gray-800 mb-4">检测数据</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-white p-3 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">蛋白质含量</div>
+                            <div class="font-medium">21.3g/100g</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">脂肪含量</div>
+                            <div class="font-medium">2.8g/100g</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">水分含量</div>
+                            <div class="font-medium">75.4%</div>
+                        </div>
+                        <div class="bg-white p-3 rounded-lg">
+                            <div class="text-sm text-gray-500 mb-1">重金属含量</div>
+                            <div class="font-medium text-green-600">合格</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
         };
 
         function switchPage(page) {
@@ -387,6 +585,134 @@
             if (currentButton) {
                 currentButton.className = currentButton.className.replace('text-gray-400', 'text-green-500');
             }
+        }
+
+        // 处理分享功能
+        function handleShare(type) {
+            switch (type) {
+                case 'wechat':
+                    // 调用微信分享API
+                    console.log('分享到微信');
+                    break;
+                case 'moments':
+                    // 调用朋友圈分享API
+                    console.log('分享到朋友圈');
+                    break;
+                case 'telegram':
+                    // 调用Telegram分享API
+                    console.log('分享到Telegram');
+                    break;
+                case 'copy':
+                    // 复制当前页面链接
+                    navigator.clipboard.writeText(window.location.href)
+                        .then(() => {
+                            alert('链接已复制到剪贴板');
+                            toggleSharePanel();
+                        })
+                        .catch(err => console.error('复制失败:', err));
+                    break;
+            }
+        }
+
+        // 添加页面历史记录
+        let pageHistory = ['home'];
+
+        // 改进页面切换函数
+        function switchPage(page) {
+            const currentPage = document.getElementById('currentPage');
+
+            // 添加转场动画
+            currentPage.style.opacity = '0';
+            currentPage.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                // 更新页面内容
+                currentPage.innerHTML = pages[page];
+
+                // 更新历史记录
+                if (page !== pageHistory[pageHistory.length - 1]) {
+                    pageHistory.push(page);
+                }
+
+                // 恢复动画状态
+                currentPage.style.opacity = '1';
+                currentPage.style.transform = 'translateY(0)';
+
+                // 更新导航状态
+                updateNavigation(page);
+            }, 300);
+        }
+
+        // 返回上一页功能
+        function goBack() {
+            if (pageHistory.length > 1) {
+                pageHistory.pop();
+                const previousPage = pageHistory[pageHistory.length - 1];
+                switchPage(previousPage);
+            }
+        }
+
+        // 初始化函数
+        function init() {
+            // 显示首页
+            switchPage('home');
+
+            // 监听返回按钮点击
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('button[onclick*="switchPage(\'home\')"]')) {
+                    goBack();
+                    e.preventDefault();
+                }
+            });
+
+            // 添加扫码按钮点击事件
+            document.addEventListener('click', (e) => {
+                if (e.target.closest('button.bg-green-500')) {
+                    switchPage('scan');
+                    e.preventDefault();
+                }
+            });
+
+            // 初始化分享面板
+            const shareButton = document.querySelector('button[class*="share-button"]');
+            if (shareButton) {
+                shareButton.addEventListener('click', toggleSharePanel);
+            }
+        }
+
+        // 启动应用
+        init();
+
+        // 添加新的功能函数
+        function showBlockchainVerification() {
+            alert('区块链存证信息：\n交易哈希：0x7f1e48...\n时间戳：2024-01-20 15:30:22\n存证内容：产品溯源数据完整性哈希');
+        }
+
+        function showQualityReport() {
+            alert('正在加载质检报告PDF...');
+        }
+
+        // 添加新功能函数
+        function showCertificate(type) {
+            const certificates = {
+                safety: {
+                    title: '水产品质量安全认证证书',
+                    issuer: '国家水产品质量监督检验中心',
+                    date: '2024-01-20',
+                    validUntil: '2025-01-19',
+                    content: '证明该批次产品符合《水产品质量安全标准》要求...'
+                },
+                quality: {
+                    title: '质量检测报告',
+                    issuer: '水产品质量检测中心',
+                    date: '2024-01-20',
+                    batchNo: 'QC20240120-001',
+                    content: '检测结果表明所有指标均符合国家标准要求...'
+                }
+            };
+
+            const cert = certificates[type];
+            alert(`${cert.title}\n\n发证机构：${cert.issuer}\n发证日期：${cert.date}\n${type === 'safety' ? '有效期至：' + cert.validUntil : '批次编号：' + cert.batchNo}\n\n${cert.content}`);
         }
     </script>
 </body>
